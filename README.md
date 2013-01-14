@@ -15,7 +15,7 @@ This compiler provides a fully-compatible Protocol Buffer compiler based on [Ant
 - generate the message definition in native language, say Javascript, for a given proto file, and
 - generate the service definition in native language.
 
-This project is inspired by [sirikata's ProtoJs project](https://github.com/sirikata/protojs) which uses Antlr as well, but fully rewritten.
+This project is inspired by [sirikata's ProtoJs project](https://github.com/sirikata/protojs) which uses Antlr as well, but fully rewrote.
 
 Install
 -------
@@ -25,4 +25,4 @@ Install
     ./bootstrap.sh
     make
 
-After that, a sample compiler will be build.
+After that, a sample compiler will be built.
