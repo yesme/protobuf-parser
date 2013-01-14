@@ -1,0 +1,34 @@
+// Follow the language guide and style guide:
+// https://developers.google.com/protocol-buffers/docs/proto
+// https://developers.google.com/protocol-buffers/docs/style
+
+// TEST: line comment
+/* TEST: block comment cross multiline
+*/
+// TEST: nested line comment (outer) // TEST: nested line comment (inner)
+/* TEST: nested block comment (outer)
+// TEST: nested line comment (inner)
+*/
+// TEST: nested line comment (outer) /* TEST: nested block comment (inner) */
+
+// TEST: package
+package mypack;
+/*
+// FAILTEST: multiple packages
+package mypack.some_else;
+*/
+
+// TEST: imports with -I parameter
+import "google/protobuf/descriptor.proto";
+import "options.proto";
+import "bases.proto";
+import "messages.proto";
+import "services.proto";
+
+/*
+// FAILTEST: imports nonexist
+import "nonexist.proto";
+*/
+
+option (mypack.options.myfile_enum) = zero;
+option (mypack.options.myfile_ref) = "reference";

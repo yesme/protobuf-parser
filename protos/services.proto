@@ -1,0 +1,44 @@
+// TEST: package - qualified
+package mypack.services;
+
+import "google/protobuf/descriptor.proto";
+import "options.proto";
+import "bases.proto";
+import "messages.proto";
+
+// TEST: service names
+service NameService  {}  // start with higher case
+service nameService  {}  // start with lower case
+service _nameService {}  // start with under
+service Name_service {}  // distinguish under
+service N0meService  {}  // contain number
+service nameservice  {}  // all lower case
+service NAMESERVICE  {}  // all higher case
+
+// TEST: method names
+service DummyService {
+  rpc NameMethod  (LocalRequest) returns (LocalResponse);
+  rpc nameMethod  (LocalRequest) returns (LocalResponse);
+  rpc _nameMethod (LocalRequest) returns (LocalResponse);
+  rpc Name_method (LocalRequest) returns (LocalResponse);
+  rpc N0meMethod  (LocalRequest) returns (LocalResponse);
+  rpc namemethod  (LocalRequest) returns (LocalResponse);
+  rpc NAMEMETHOD  (LocalRequest) returns (LocalResponse);
+}
+
+// TEST: service
+message LocalRequest {}
+message LocalResponse {}
+
+service MyService {
+  // TEST: service_option - customized
+  option (mypack.options.myservice_fixed32) = 4294967295;
+  option (mypack.options.myservice_fixed64) = 18446744073709551615;
+
+  rpc LocalCall (LocalRequest) returns (LocalResponse) {
+    option (mypack.options.mymethod_sfixed32) = 2147483647;
+    option (mypack.options.mymethod_sfixed64) = 9223372036854775807;
+  }
+
+  rpc RemoteCall (mypack.bases.MyRequest) returns (mypack.bases.MyResponse);
+}

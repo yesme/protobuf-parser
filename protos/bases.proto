@@ -1,0 +1,28 @@
+// TEST: package - qualified
+package mypack.bases;
+
+// TEST: name resolution
+message AmbiguousMsg {
+  optional string mypack_bases_msg = 1;
+}
+
+enum AmbiguousEnum {
+  mypack_bases_enum = 0;
+}
+
+// TEST: scopes
+message MyRequest {
+  required string frequired = 1;
+  optional string foptional = 2;
+  repeated string frepeated = 3;
+
+  extensions 100 to 200;
+}
+
+// TEST: name resolution
+message MyResponse {
+  optional AmbiguousMsg  fmypack_bases_msg  = 1;
+  optional AmbiguousEnum fmypack_bases_enum = 2;
+
+  extensions 100 to max;
+}

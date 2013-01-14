@@ -1,0 +1,119 @@
+// Follow the language guide and style guide:
+// https://developers.google.com/protocol-buffers/docs/proto
+// https://developers.google.com/protocol-buffers/docs/style
+
+// TEST: package - qualified
+package mypack.options;
+
+import "google/protobuf/descriptor.proto";
+
+enum OptionEnum {
+  zero       =  0;
+  ONE        =  1;
+  Two        =  2;
+  _three     =  3;
+  TWENTY_ONE = 21;
+}
+
+message SubOptionMessage {
+  required string frequired = 1;
+  optional string foptional = 2;
+//repeated string frepeated = 3;  // repeated options are not supported.
+}
+
+message OptionMessage {
+  optional double   fdouble   =  1;
+  optional float    ffloat    =  2;
+  optional int32    fint32    =  3;
+  optional int64    fint64    =  4;
+  optional uint32   fuint32   =  5;
+  optional uint64   fuint64   =  6;
+  optional sint32   fsint32   =  7;
+  optional sint64   fsint64   =  8;
+  optional fixed32  ffixed32  =  9;
+  optional fixed64  ffixed64  = 10;
+  optional sfixed32 fsfixed32 = 11;
+  optional sfixed64 fsfixed64 = 12;
+  optional bool     fbool     = 13;
+  optional string   fstring   = 14;
+  optional bytes    fbytes    = 15;
+  optional SubOptionMessage fsub = 16;
+}
+
+// TEST: FileOptions
+extend google.protobuf.FileOptions {
+  optional bool          myfile_bool    = 9527;
+  optional string        myfile_string  = 9528;
+  optional bytes         myfile_bytes   = 9529;
+  optional string        myfile_ref     = 9530;
+  optional OptionMessage myfile_message = 9531;
+  optional OptionEnum    myfile_enum    = 9532;
+}
+
+// TEST: MessageOptions
+extend google.protobuf.MessageOptions {
+  optional double        mymessage_double  = 9527;
+  optional float         mymessage_float   = 9528;
+  optional OptionMessage mymessage_message = 9529;
+}
+
+// TEST: FieldOptions
+extend google.protobuf.FieldOptions {
+  optional int32         myfield_int32   = 9527;
+  optional int64         myfield_int64   = 9528;
+  optional OptionMessage myfield_message = 9529;
+}
+
+// TEST: EnumOptions
+extend google.protobuf.EnumOptions {
+  optional uint32        myenum_uint32  = 9527;
+  optional uint64        myenum_uint64  = 9528;
+  optional OptionMessage myenum_message = 9529;
+}
+
+// TEST: EnumValueOptions
+extend google.protobuf.EnumValueOptions {
+  optional sint32        myenumvalue_sint32  = 9527;
+  optional sint64        myenumvalue_sint64  = 9528;
+  optional OptionMessage myenumvalue_message = 9529;
+}
+
+// TEST: ServiceOptions
+extend google.protobuf.ServiceOptions {
+  optional fixed32       myservice_fixed32 = 9527;
+  optional fixed64       myservice_fixed64 = 9528;
+  optional OptionMessage myservice_message = 9529;
+}
+
+// TEST: MethodOptions
+extend google.protobuf.MethodOptions {
+  optional sfixed32      mymethod_sfixed32 = 9527;
+  optional sfixed64      mymethod_sfixed64 = 9528;
+  optional OptionMessage mymethod_message  = 9529;
+}
+
+// TEST: file_option - predefined
+option optimize_for = SPEED;
+option cc_generic_services = false;
+
+// TEST: file_option - customized
+option (myfile_message).fdouble   = 1.7E-308;
+option (myfile_message).ffloat    = -3.4E38;
+option (myfile_message).fint32    = 0x32B;
+option (myfile_message).fint64    = -064;
+option (myfile_message).fuint32   = 4294967295;
+option (myfile_message).fuint64   = 18446744073709551615;
+option (myfile_message).fsint32   = -2147483648;
+option (myfile_message).fsint64   = -9223372036854775808;
+option (myfile_message).ffixed32  = 4294967295;
+option (myfile_message).ffixed64  = 18446744073709551615;
+option (myfile_message).fsfixed32 = 2147483647;
+option (myfile_message).fsfixed64 = 9223372036854775807;
+option (myfile_message).fbool   = false;
+option (myfile_message).fstring = "ascii str, octal \\163\\164\\162, hex \\u0073\\u0074\\u0072";
+option (myfile_message).fbytes  = "bytes";
+option (myfile_message).fsub.frequired = "[file option][sub message]: required";
+option (myfile_message).fsub.foptional = "[file option][sub message]: optional";
+option (myfile_bool)   = false;
+option (myfile_string) = "string";
+option (myfile_bytes)  = "bytes";

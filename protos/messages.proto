@@ -1,0 +1,147 @@
+// TEST: package - qualified
+package mypack.messages;
+
+import "google/protobuf/descriptor.proto";
+import "options.proto";
+import "bases.proto";
+
+// TEST: name resolution
+message AmbiguousMsg {
+  optional string mypack_ambiguous_msg = 1;
+}
+
+enum AmbiguousEnum {
+  mypack_ambiguous_enum = 0;
+}
+
+message ExplicitMsg {
+  optional string mypack_explicit_msg = 1;
+}
+
+enum ExplicitEnum {
+  mypack_explicit_enum = 0;
+}
+
+// TEST: entension, new resolution
+extend mypack.bases.MyResponse {
+  optional AmbiguousMsg  fmypack_msg  = 101;
+  optional AmbiguousEnum fmypack_enum = 102;
+  optional mypack.bases.AmbiguousMsg  fmypack_bases_remote_msg  = 201;
+  optional mypack.bases.AmbiguousEnum fmypack_bases_remote_enum = 202;
+}
+
+// TEST: message names
+message NameMessage  {}  // start with higher case
+message nameMessage  {}  // start with lower case
+message _nameMessage {}  // start with under
+message Name_message {}  // distinguish under
+message N0meMessage  {}  // contain number
+message namemessage  {}  // all lower case
+message NAMEMESSAGE  {}  // all higher case
+
+// TEST: enum names
+enum NameEnum  {
+  NameEnumValue = 0;
+}
+enum nameEnum  {
+  nameEnumValue = 0;
+}
+enum _nameEnum {
+  _nameEnumValue = 0;
+}
+enum Name_enum {
+  Name_enumValue = 0;
+}
+enum N0meEnum  {
+  N0meEnumValue = 0;
+}
+enum nameenum  {
+  nameenumvalue = 0;
+}
+enum NAMEENUM  {
+  NAMEENUMVALUE = 0;
+}
+
+// TEST: message
+message OutterMsg {
+  optional string outter_msg = 1;
+}
+
+enum OutterEnum {
+  // TEST: enum_option - customized
+  option (mypack.options.myenum_uint32) = 4294967295;
+  option (mypack.options.myenum_uint64) = 18446744073709551615;
+//option (mypack.options.myenum_message.ffloat) = 1.0;  // Not supported
+  option (mypack.options.myenum_message) = {fsub : {frequired: "[method option][sub message]: required" foptional: "[method option][sub message]: optional"}};
+  outter_enum = 0;
+  // TEST: enum_value - customized
+  outter_enum_option1 = 1 [(mypack.options.myenumvalue_sint32) = -2147483648];
+  outter_enum_option2 = 2 [(mypack.options.myenumvalue_sint64) = -9223372036854775808];
+  outter_enum_option3 = 3 [(mypack.options.myenumvalue_message).ffloat = 0.5, (mypack.options.myenumvalue_message).fdouble = 2.0];
+}
+
+message MyMessage {
+  // TEST: field names
+  optional string NameField  = 1;
+  optional string nameField  = 2;
+  optional string _nameField = 3;
+  optional string Name_field = 4;
+  optional string N0meField  = 5;
+  optional string namefield  = 6;
+  optional string NAMEFIELD  = 7;
+
+  // TEST: message types and default value
+  optional double   fdouble   = 101 [default = 1.7E-308];              // (-1.7E-308, 1.7E308)
+  optional float    ffloat    = 102 [default = -3.4E38];               // ( -3.4E-38,  3.4E38)
+  optional int32    fint32    = 103 [default = 0x32B];                 // HEX
+  optional int64    fint64    = 104 [default = -064];                  // OCTAL
+  optional uint32   fuint32   = 105 [default = 4294967295];            // (0, 4294967295)
+  optional uint64   fuint64   = 106 [default = 18446744073709551615];  // (0, 18446744073709551615)
+  optional sint32   fsint32   = 107 [default = -2147483648];           // (-2147483648, 2147483647)
+  optional sint64   fsint64   = 108 [default = -9223372036854775808];  // (-9223372036854775808, 9223372036854775807)
+  optional fixed32  ffixed32  = 109 [default = 4294967295];            // (0, 4294967295)
+  optional fixed64  ffixed64  = 110 [default = 18446744073709551615];  // (0, 18446744073709551615)
+  optional sfixed32 fsfixed32 = 111 [default = 2147483647];            // (-2147483648, 2147483647)
+  optional sfixed64 fsfixed64 = 112 [default = 9223372036854775807];   // (-9223372036854775808, 9223372036854775807)
+  optional bool     fbool     = 113 [default = true];
+  optional string   fstring   = 114 [default = "ascii str, octal \\163\\164\\162, hex \\u0073\\u0074\\u0072"];
+  optional bytes    fbytes    = 115 [default = "bytes"];
+
+  // TEST: float/double format
+  optional float ffformat1 = 116 [default =   1.2e13];
+  optional float ffformat2 = 117 [default =  -1.2e13];
+  optional float ffformat3 = 118 [default =  1.2e-13];
+  optional float ffformat4 = 119 [default = -1.2e-13];
+  optional float ffformat5 = 120 [default = 1];
+  optional float ffformat6 = 121 [default = 1.23];
+  optional float ffformat7 = 122 [default = -1.2];
+  optional float ffformat8 = 123 [default = .012];
+  optional float ffformat9 = 124 [default = -.01];
+
+  message NestedMsg {
+    optional string nested_msg = 1;
+  }
+
+  enum NestedEnum {
+    nested_enum = 0;
+  }
+
+  optional NestedMsg  fnested_msg  = 201;
+  optional NestedEnum fnested_enum = 202;
+  optional OutterMsg  foutter_msg  = 203;
+  optional OutterEnum foutter_enum = 204;
+
+  // TEST: message_option - predefined
+  option message_set_wire_format = false;
+  // TEST: message_option - customized
+  option (mypack.options.mymessage_double) = 1.7E308;
+  option (mypack.options.mymessage_float)  = -3.4E-38;
+  option (mypack.options.mymessage_message).fsub = {frequired: "[method option][sub message]: required" foptional: "[method option][sub message]: optional"};
+  // TEST: field - predefined
+  optional string ffield_option_deprecated = 301 [deprecated = false];
+  repeated double ffield_option_packed     = 302 [packed = true];
+  // TEST: field_option - customized
+  optional string ffield_option_customized1 = 303 [(mypack.options.myfield_int32) = 0x32B];
+  optional string ffield_option_customized2 = 304 [(mypack.options.myfield_int64) = -064];
+  optional string ffield_option_customized3 = 305 [(mypack.options.myfield_message) = {ffloat: .01 fdouble: -0.1}];
+}
