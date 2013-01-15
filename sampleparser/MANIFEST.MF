@@ -1,2 +1,2 @@
-Main-Class: ProtoCompiler
+Main-Class: sampleparser.SampleParser
 Class-Path: lib/antlr-runtime-3.2.jar lib/commons-cli-1.2.jar

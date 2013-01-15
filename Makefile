@@ -2,30 +2,38 @@ ifeq ($(uname),Darwin)
 FLAGS += -arch i386
 endif
 
-protoc.jar : ProtoCompiler.java ProtoParser.java ProtoLexer.java MANIFEST.MF
-	@echo "building protoc.jar"
-	@javac -classpath lib/antlr-runtime-3.2.jar:lib/commons-cli-1.2.jar:. ProtoCompiler.java ProtoParser.java ProtoLexer.java
-	@jar -cfm protoc.jar MANIFEST.MF *.class
+sampleparser.jar : dsl/ProtoParser.java dsl/ProtoLexer.java sampleparser/MANIFEST.MF sampleparser/*.java
+	@echo "building sampleparser.jar"
+	@javac -classpath lib/antlr-runtime-3.2.jar:lib/commons-cli-1.2.jar:. dsl/*.java sampleparser/*.java
+	@jar -cfm sampleparser.jar sampleparser/MANIFEST.MF dsl/*.class sampleparser/*.class
 	@rm -f *.class
 
-ProtoParser.java : ProtoParser.g ProtoLexer.tokens
+dsl/ProtoParser.java : dsl/ProtoParser.g dsl/ProtoLexer.tokens
 	@echo "building parser"
-	@java -jar lib/antlr-3.2.jar ProtoParser.g
+	@java -jar lib/antlr-3.2.jar -fo dsl/ dsl/ProtoParser.g
 
-ProtoParser.tokens : ProtoParser.g ProtoLexer.tokens
+dsl/ProtoParser.tokens : dsl/ProtoParser.g dsl/ProtoLexer.tokens
 	@echo "building parser"
-	@java -jar lib/antlr-3.2.jar ProtoParser.g
+	@java -jar lib/antlr-3.2.jar -fo dsl/ dsl/ProtoParser.g
 
-ProtoLexer.java : ProtoLexer.g
+dsl/ProtoLexer.java : dsl/ProtoLexer.g
 	@echo "building lexer"
-	@java -jar lib/antlr-3.2.jar ProtoLexer.g
+	@java -jar lib/antlr-3.2.jar -fo dsl/ dsl/ProtoLexer.g
 
-ProtoLexer.tokens : ProtoLexer.g
+dsl/ProtoLexer.tokens : dsl/ProtoLexer.g
 	@echo "building lexer"
-	@java -jar lib/antlr-3.2.jar ProtoLexer.g
+	@java -jar lib/antlr-3.2.jar -fo dsl/ dsl/ProtoLexer.g
 
 clean :
-	@rm -f *.class Proto.tokens ProtoLexer.java ProtoParser.java *.tokens protoc.jar
+	@rm -f dsl/*.java dsl/*.tokens dsl/*.class sampleparser/*.class sampleparser.jar
 
-#test : protoc.jar
-#	@java -jar protoc.jar protos/main.proto
+cleanclean : clean
+	@rm -rf lib
+
+testparser : sampleparser.jar
+	@java -jar sampleparser.jar protos/*.proto
+
+testprotos :
+	@if [ -d output ]; then true; else mkdir output; fi
+	@protoc --proto_path=/usr/local/include:protos/:. --java_out=./output/ --cpp_out=./output/ --python_out=./output/ protos/*.proto
+	@rm -rf ./output

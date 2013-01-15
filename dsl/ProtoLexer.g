@@ -2,6 +2,10 @@
 // https://developers.google.com/protocol-buffers/docs/proto
 lexer grammar ProtoLexer;
 
+@header {
+    package dsl;
+}
+
 COMMENT
   :  '//' ~('\n' | '\r')* END_OF_LINE {skip();}
   |  '/*' (options {greedy=false;} : .)* '*/' {skip();}

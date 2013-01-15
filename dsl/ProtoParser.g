@@ -17,6 +17,10 @@ tokens {
   MESSAGE_FIELD;
 }
 
+@header {
+    package dsl;
+}
+
 // Predefines
 all_identifier
   :  IDENTIFIER
