@@ -4,7 +4,7 @@ endif
 
 sampleparser.jar : dsl/ProtoParser.java dsl/ProtoLexer.java sampleparser/MANIFEST.MF sampleparser/*.java
 	@echo "building sampleparser.jar"
-	@javac -classpath lib/antlr-runtime-3.2.jar:lib/commons-cli-1.2.jar:. dsl/*.java sampleparser/*.java
+	@javac -classpath lib/antlr-runtime-3.2.jar:lib/commons-cli-1.2.jar:lib/guava-13.0.1.jar:. dsl/*.java sampleparser/*.java
 	@jar -cfm sampleparser.jar sampleparser/MANIFEST.MF dsl/*.class sampleparser/*.class
 	@rm -f *.class
 
@@ -30,8 +30,11 @@ clean :
 cleanclean : clean
 	@rm -rf lib
 
-testparser : sampleparser.jar
+testparsersimple : sampleparser.jar
 	@java -jar sampleparser.jar protos/*.proto
+
+testparserverbose : sampleparser.jar
+	@java -jar sampleparser.jar protos/*.proto -t
 
 testprotos :
 	@if [ -d output ]; then true; else mkdir output; fi

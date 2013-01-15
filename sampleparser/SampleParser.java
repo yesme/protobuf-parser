@@ -32,19 +32,30 @@ private static void printHelp(Options options, String addition) {
 }
 
 private static void parseFile(String fname) {
+  System.out.println("-------------------------------------------------------------------------------");
+  System.out.printf("Parse protobuf file [%s]\n", fname);
+  ANTLRFileStream input = null;
   try {
     // create a CharStream that reads from a file
-    ANTLRFileStream input = new ANTLRFileStream(fname);
+    input = new ANTLRFileStream(fname);
+  } catch (IOException e) {
+    System.out.printf("File [%s] is not found. Skipped.\n", fname);
+    System.exit(1);
+  }
+  // create a lexer that feeds off of input CharStream
+  SampleProtoLexer lexer = new SampleProtoLexer(input);
+  SampleExceptionHandler lexExceptionHandler = new SampleExceptionHandler(fname, SampleProtoLexer.getLiterals(), null, true);
+  lexer.registerExceptionHandler(lexExceptionHandler);
 
-    // create a lexer that feeds off of input CharStream
-    SampleProtoLexer lex = new SampleProtoLexer(input);
+  // create a buffer of tokens pulled from the lexer
+  CommonTokenStream tokens = new CommonTokenStream(lexer);
 
-    // create a buffer of tokens pulled from the lexer
-    CommonTokenStream tokens = new CommonTokenStream(lex);
+  // create a parser that feeds off the tokens buffer
+  SampleProtoParser parser = new SampleProtoParser(tokens);
+  SampleExceptionHandler parserExceptionHandler = new SampleExceptionHandler(fname, SampleProtoLexer.getLiterals(), parser.getTokenNames(), false);
+  parser.registerExceptionHandler(parserExceptionHandler);
 
-    // create a parser that feeds off the tokens buffer
-    SampleProtoParser parser = new SampleProtoParser(tokens);
-
+  try {
     // begin parsing at rule program
     SampleProtoParser.proto_return result = parser.proto();
 
@@ -52,22 +63,18 @@ private static void parseFile(String fname) {
     CommonTree tree = (CommonTree) result.getTree();
 
     // trace the tree
-    System.out.println("-------------------------------------------------------------------------------");
-    System.out.printf("Parse protobuf file [%s]\n", fname);
     if (SampleParser.showTrace) {
       SampleParser.trace(tree, 0);
     }
-/*
+  /*
     StringBuilder msg = new StringBuilder();
-    msg.append("Default AST tree: ");
+    msg.append("AST tree for proto: ");
     msg.append(tree.toStringTree());
     System.out.println(msg.toString());
-*/
+  */
   } catch (RecognitionException e) {
     System.out.println("Protocol Buffer Parser threw exception:");
     e.printStackTrace();
-  } catch (IOException e) {
-    System.out.printf("File [%s] is not found. Skipped.\n", fname);
   }
 }
 

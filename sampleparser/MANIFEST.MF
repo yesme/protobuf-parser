@@ -1,2 +1,2 @@
 Main-Class: sampleparser.SampleParser
-Class-Path: lib/antlr-runtime-3.2.jar lib/commons-cli-1.2.jar
+Class-Path: lib/antlr-runtime-3.2.jar lib/commons-cli-1.2.jar lib/guava-13.0.1.jar

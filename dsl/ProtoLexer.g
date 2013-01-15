@@ -3,14 +3,49 @@
 lexer grammar ProtoLexer;
 
 @header {
-    package dsl;
+package dsl;
+
+import com.google.common.collect.*;
+import java.util.Map;
+}
+
+@members {
+private static Map<String, String> literals = HashBiMap.create();
+static {
+    literals.put("PACKAGE_LITERAL", "package");
+    literals.put("IMPORT_LITERAL", "import");
+    literals.put("OPTION_LITERAL", "option");
+    literals.put("ENUM_LITERAL", "enum");
+    literals.put("MESSAGE_LITERAL", "message");
+    literals.put("EXTEND_LITERAL", "extend");
+    literals.put("EXTENSIONS_DEF_LITERAL", "extensions");
+    literals.put("EXTENSIONS_TO_LITERAL", "to");
+    literals.put("EXTENSIONS_MAX_LITERAL", "max");
+    literals.put("SERVICE_LITERAL", "service");
+    literals.put("RETURNS_LITERAL", "returns");
+    literals.put("RPC_LITERAL", "rpc");
+    literals.put("BLOCK_OPEN", "{");
+    literals.put("BLOCK_CLOSE", "}");
+    literals.put("PAREN_OPEN", "(");
+    literals.put("PAREN_CLOSE", ")");
+    literals.put("BRACKET_OPEN", "[");
+    literals.put("BRACKET_CLOSE", "]");
+    literals.put("EQUALS", "=");
+    literals.put("COLON", ":");
+    literals.put("COMMA", ",");
+    literals.put("ITEM_TERMINATOR", ";");
+}
+
+public static Map getLiterals() {
+    return literals;
+}
 }
 
 COMMENT
   :  '//' ~('\n' | '\r')* END_OF_LINE {skip();}
   |  '/*' (options {greedy=false;} : .)* '*/' {skip();}
   ;
-fragment END_OF_LINE: '\n' | '\r' | '\r\n' {skip();};
+fragment END_OF_LINE: '\r\n' | '\n' | '\r' | {skip();};
 WHITESPACE : ('\t' | ' ' | '\r' | '\n' | '\u000C')+ {skip();};
 
 PACKAGE_LITERAL : 'package' ;
@@ -108,7 +143,7 @@ fragment DECIMAL_LITERAL : ('0' | '-'? '1'..'9' '0'..'9'*) ;
 STRING_LITERAL
   :  '"' STRING_GUTS '"'
   ;
-fragment STRING_GUTS : ( ESCAPE_SEQUENCE | ~('\\'|'"') )* ;
+fragment STRING_GUTS : ( ESCAPE_SEQUENCE | ~('\\'|'"'|'\n'|'\r') )* ;
 
 fragment ESCAPE_SEQUENCE
   :  '\\' ('b'|'t'|'n'|'f'|'r'|'\"'|'\''|'\\')
