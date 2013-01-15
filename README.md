@@ -41,4 +41,13 @@ Therefore <code>make</code> will
 
 For the one who wants to provide Protocol Buffer implementation, or provide Service implementation, please take a look at <code>sampleparser/SampleParser.java</code> - it's a sample shows how to use it.
 
+In order to test the compatibility with protoc (Google's Protocol Buffer Compiler), run the following command:
+
+    make testprotos
+
+In order to test the current parser, run the following commands.  It will translate the input proto file into [AST (Abstract Syntax Tree)](http://en.wikipedia.org/wiki/Abstract_syntax_tree).
+
+    make testparsersimple  # simply test if the parser works
+    make testparserverbose # run the parser and print out the AST
+
 For any question, please feel free to mail jacky.chao.wang@gmail.com for more information.
